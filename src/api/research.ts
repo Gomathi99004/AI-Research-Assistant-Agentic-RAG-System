@@ -21,3 +21,13 @@ export async function uploadPdf(file: File): Promise<any> {
   })
   return response.data
 }
+
+export async function fetchDocuments(): Promise<{documents: {title: string}[]}> {
+  const response = await api.get('/documents')
+  return response.data
+}
+
+export async function deleteDocument(filename: string): Promise<{status: string, message: string}> {
+  const response = await api.delete(`/documents/${encodeURIComponent(filename)}`)
+  return response.data
+}

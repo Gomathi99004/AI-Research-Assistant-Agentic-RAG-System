@@ -17,4 +17,5 @@ export interface ResearchResponse {
 
 export interface QueryRequest {
   query: string;
+  files?: string[];
 }

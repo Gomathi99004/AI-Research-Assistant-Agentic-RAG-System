@@ -7,36 +7,24 @@ interface Props {
 
 export default function SourceCard({ source }: Props) {
   return (
-    <div className="group flex items-start gap-3 p-4 rounded-xl relative bg-zinc-950 border border-zinc-800 transition-all hover:bg-zinc-900 overflow-hidden">
-      <div className="absolute top-0 left-0 w-1 h-full bg-zinc-800 group-hover:bg-blue-500 transition-colors" />
+    <div className="group relative flex items-center justify-center p-2 px-3 rounded-lg bg-[#1c1c1e] hover:bg-indigo-500/10 border border-zinc-800 hover:border-indigo-500/30 transition-all cursor-pointer shadow-sm">
+      <FileTextIcon className="w-3.5 h-3.5 text-indigo-400" />
       
-      <div className="p-2 rounded-lg bg-zinc-800/50 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all duration-300">
-        <FileTextIcon className="w-5 h-5" />
-      </div>
-      
-      <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-semibold text-zinc-200 truncate pr-4">
-          {source.title}
-        </h4>
-        <div className="flex items-center gap-3 mt-1.5 opacity-80">
-          <div className="flex items-center gap-1.5">
-            <div className="text-[10px] tracking-wider uppercase font-semibold text-zinc-500">
-              Chunk
-            </div>
-            <code className="text-xs bg-black px-1.5 py-0.5 rounded text-zinc-400 font-mono">
-              {source.chunk_id.substring(0, 8)}
-            </code>
-          </div>
-          <div className="h-3 w-px bg-zinc-800"></div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] tracking-wider uppercase font-semibold text-zinc-500">
-              Match
-            </span>
-            <span className="text-xs text-blue-400 font-medium">
-              {(source.relevance_score * 100).toFixed(1)}%
-            </span>
-          </div>
+      {/* Tooltip that only appears on hover */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-max min-w-[200px] px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all pointer-events-none z-50 flex flex-col items-center">
+        <span className="text-sm font-semibold text-zinc-100">{source.title}</span>
+        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-zinc-800 w-full justify-center">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold bg-black px-1.5 py-0.5 rounded">
+            Chunk: {source.chunk_id.substring(0, 6)}
+          </span>
+          <span className="text-xs text-indigo-400 font-medium bg-indigo-500/10 px-1.5 py-0.5 rounded">
+            Match: {(source.relevance_score * 100).toFixed(1)}%
+          </span>
         </div>
+        
+        {/* Triangle caret pointer */}
+        <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-zinc-700"></div>
+        <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-zinc-900 mb-[1px]"></div>
       </div>
     </div>
   )
