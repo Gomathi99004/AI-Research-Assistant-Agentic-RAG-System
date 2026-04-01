@@ -1,0 +1,57 @@
+# Environments
+.env
+.env.*
+!.env.example
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Data stores and keys
+*.pkl
+local_store.pkl
+*.sqlite3
+
+# OS/Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Testing & Logs
+test_llm_out.txt
+ingest_output.txt
+out2.txt
+res.txt
+utf8_out.txt
+utf8_out2.txt
+limits.txt
+valid_models.txt
+*.log
+
+# Test Scripts
+check_limits.py
+peek.py
+test_llm.py
+test_pipeline.py
+test_query.py
