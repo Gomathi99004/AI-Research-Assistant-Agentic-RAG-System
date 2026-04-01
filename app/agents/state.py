@@ -13,3 +13,4 @@ class AgentState(TypedDict):
     confidence: float
     retry_count: int
     final_response: Optional[ResearchResponse]
+    files: Optional[List[str]]

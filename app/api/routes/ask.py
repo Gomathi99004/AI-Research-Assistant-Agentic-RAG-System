@@ -14,7 +14,7 @@ async def ask_question(request: QueryRequest):
         
     start_time = time.time()
     try:
-        response = await process_query(request.query)
+        response = await process_query(request.query, request.files)
         response.latency_ms = int((time.time() - start_time) * 1000)
         return response
     except Exception as e:

@@ -5,11 +5,18 @@ class Settings(BaseSettings):
     # LLM Providers
     GROQ_API_KEYS: str
     GEMINI_API_KEYS: str
-
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    
+    # NLP Ranking
+    RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    
     # Vector Store
-    MONGODB_URI: str = ''
-    VECTOR_STORE: str = "local"
+    MONGODB_URI: str = "mongodb://localhost:27017/"
+    VECTOR_STORE: str = "mongodb"
     LOCAL_STORE_PATH: str = "local_store.pkl"
+    MONGODB_DB_NAME: str = "rag_db"
+    MONGODB_COLLECTION: str = "chunks"
 
     # Retrieval
     RETRIEVAL_TOP_K: int = 5

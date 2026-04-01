@@ -23,7 +23,7 @@ def load_pdf(file_path: str) -> List[Dict]:
     
     ocr_model = None
     if genai and settings.gemini_keys:
-        ocr_model = genai.GenerativeModel('gemini-2.5-flash')
+        ocr_model = genai.GenerativeModel(settings.GEMINI_MODEL)
         
     for page_num in range(len(doc)):
         page = doc.load_page(page_num)

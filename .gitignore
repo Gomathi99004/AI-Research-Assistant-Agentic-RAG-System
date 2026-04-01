@@ -55,3 +55,6 @@ peek.py
 test_llm.py
 test_pipeline.py
 test_query.py
+
+uploads/
+cleanup_store.py

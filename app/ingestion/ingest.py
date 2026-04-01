@@ -21,9 +21,9 @@ def run_ingestion(file_path: str):
     print("Generating embeddings (this might take a moment)...")
     embedded_chunks = embed_chunks(chunks)
     
-    print("Upserting to Local Vector Store...")
+    print("Upserting to MongoDB Vector Store...")
     upsert_chunks(embedded_chunks)
-    print("Done!")
+    print("Done! Document successfully ingested.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Ingest a PDF document into Local Vector Store")

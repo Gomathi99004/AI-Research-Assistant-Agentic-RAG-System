@@ -18,3 +18,4 @@ class ResearchResponse(BaseModel):
 
 class QueryRequest(BaseModel):
     query: str
+    files: Optional[List[str]] = None

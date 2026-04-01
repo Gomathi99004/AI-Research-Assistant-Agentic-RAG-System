@@ -45,7 +45,7 @@ class LLMManager:
             try:
                 chat_completion = await client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt}],
-                    model="llama-3.3-70b-versatile",
+                    model=settings.GROQ_MODEL,
                     max_tokens=max_tokens,
                 )
                 return chat_completion.choices[0].message.content
@@ -63,7 +63,7 @@ class LLMManager:
                 break
             try:
                 genai.configure(api_key=key)
-                model = genai.GenerativeModel('gemini-2.5-flash')
+                model = genai.GenerativeModel(settings.GEMINI_MODEL)
                 response = model.generate_content(prompt)
                 return response.text
             except Exception as e:
