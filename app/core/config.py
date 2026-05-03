@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     GEMINI_MODEL: str = "gemini-2.5-flash"
     
     # NLP Ranking
-    RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    RERANKER_MODEL: str = "BAAI/bge-reranker-large"
     
     # Vector Store
     MONGODB_URI: str = "mongodb://localhost:27017/"
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     RETRIEVAL_TOP_K: int = 5
     RETRIEVAL_MIN_SCORE: float = 0.40
     RETRIEVAL_MODE: str = "hybrid"
-    EMBEDDING_MODEL: str = "all-mpnet-base-v2"
+    EMBEDDING_MODEL: str = "BAAI/bge-large-en-v1.5"
 
     # Cache
     REDIS_URL: str = "redis://localhost:6379/0"

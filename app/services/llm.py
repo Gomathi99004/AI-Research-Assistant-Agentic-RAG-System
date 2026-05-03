@@ -35,7 +35,11 @@ class LLMManager:
             return None
         return self.gemini_keys[self.current_gemini_idx]
 
-    async def call_llm(self, prompt: str, max_tokens: int = 1024) -> str:
+    async def call_llm(self, prompt: str, max_tokens: int = 1024, fast_mode: bool = False) -> str:
+        # Determine models
+        groq_model = "llama3-8b-8192" if fast_mode else settings.GROQ_MODEL
+        gemini_model = "gemini-1.5-flash" if fast_mode else settings.GEMINI_MODEL
+
         # Try Groq keys first
         attempts = 0
         while attempts < len(self.groq_keys):
@@ -45,7 +49,7 @@ class LLMManager:
             try:
                 chat_completion = await client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt}],
-                    model=settings.GROQ_MODEL,
+                    model=groq_model,
                     max_tokens=max_tokens,
                 )
                 return chat_completion.choices[0].message.content
@@ -63,7 +67,7 @@ class LLMManager:
                 break
             try:
                 genai.configure(api_key=key)
-                model = genai.GenerativeModel(settings.GEMINI_MODEL)
+                model = genai.GenerativeModel(gemini_model)
                 response = model.generate_content(prompt)
                 return response.text
             except Exception as e:
@@ -76,5 +80,5 @@ class LLMManager:
 
 llm_manager = LLMManager()
 
-async def call_llm(prompt: str, max_tokens: int = 1024) -> str:
-    return await llm_manager.call_llm(prompt, max_tokens)
+async def call_llm(prompt: str, max_tokens: int = 1024, fast_mode: bool = False) -> str:
+    return await llm_manager.call_llm(prompt, max_tokens, fast_mode)
