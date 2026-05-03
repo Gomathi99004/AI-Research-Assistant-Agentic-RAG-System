@@ -1,70 +1,188 @@
-# Agentic RAG Server (FastAPI Backend)
+🧠 AI Research Assistant — Agentic RAG System
 
-This is the Python-based backend service driving the local Agentic RAG application. It utilizes **FastAPI** for HTTP routing, **sentence-transformers** with local `.pkl` persistence for offline vector search, and **LangGraph** paired with **Groq** and **Google Gemini** for agent-driven self-reflection loops.
+A production-grade, **local-first** Retrieval-Augmented Generation (RAG) system powered by a **LangGraph agentic workflow**, **MongoDB vector store**, **Groq + Gemini LLM**, and a premium **React + Framer Motion** frontend.
 
-## 🛠️ Tech Stack
-* **Framework:** [FastAPI](https://fastapi.tiangolo.com/) + Uvicorn
-* **Agent Flow:** [LangGraph](https://python.langchain.com/docs/langgraph)
-* **LLM Core:** `llama-3.3-70b-versatile` (Groq API array fallback) and `gemini-2.5-flash` (Google API)
-* **Embeddings:** `all-mpnet-base-v2` (Bi-Encoder)
-* **Re-ranker:** `ms-marco-MiniLM-L-6-v2` (Cross-Encoder)
-* **Document Parser:** PyMuPDF (`fitz`) bundled with an AI visual OCR fallback string extractor for scanned documents.
+> Upload your PDF knowledge base → Select documents → Ask questions → Get structured, source-grounded answers with automatic comparative analysis across files.
 
 ---
 
-## 🚀 Setup & Installation
+✨ Features
 
-### 1. Prerequisites
-Ensure you have **Python 3.10+** installed on your system along with Pip. 
+* 📄 **PDF Upload & Ingestion** — Drag & drop PDFs, extract text with AI OCR fallback (Gemini Vision for scanned pages)
+* 🗄️ **Local Qdrant Vector Store** — Persistent vector storage with cosine similarity retrieval
+* 🤖 **Self-Correcting Agentic Pipeline**
 
-### 2. Set Up Virtual Environment
-First, open your favorite terminal directly inside this `backend/` directory. Create an isolated python container environment so you do not install massive AI packages system-wide.
+  * Classifier → Expansion → Retriever → Compressor → Summarizer → Verifier → Comparator → Failure Analysis
+* 🛡️ **Adversarial Verification** — Grounding score + fact-check loop
+* 🔄 **Fallback Strategy** — Query expansion, sparse fallback, increased search depth
+* 🔍 **Document Isolation** — Query selected PDFs only
+* 📊 **Comparative Analysis** — Detects conflicts across documents
+* 🗑️ **Document Management** — Full deletion (DB + vectors + disk)
+* 📑 **Inline PDF Viewer**
+* 🎨 **Premium UI** — Framer Motion + responsive layout
+* ⚡ **LLM Fallback** — Groq → Gemini
 
-```powershell
-# 1. Create the environment
+---
+
+🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    React Frontend (Vite)                │
+│  Upload │ Sidebar │ Query + Answer                     │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+┌───────────────────────▼─────────────────────────────────┐
+│                   FastAPI Backend                       │
+│                                                         │
+│  LangGraph Agent Flow:                                  │
+│  Classifier → Expansion → Retriever → Compressor        │
+│       ↓                     ↑                            │
+│  Comparator ← Verifier ← Summarizer                     │
+│                    ↓                                    │
+│             Failure Analysis                            │
+│                                                         │
+│  LLMs: Groq (llama-3.3-70b) → Gemini fallback           │
+│  Embeddings: all-mpnet-base-v2                          │
+└─────────┬───────────────────────────────┬───────────────┘
+          │                               │
+     Qdrant (Vectors)                MongoDB (Metadata)
+```
+
+---
+
+🚀 Quick Start
+
+Prerequisites
+
+* Python 3.11+
+* Node.js 18+
+* MongoDB (`mongodb://localhost:27017/`)
+* Redis (optional)
+
+---
+
+1. Clone Repo
+
+```bash
+git clone <your-repo-url>
+cd rag
+```
+
+---
+
+2. Backend Setup
+
+```bash
+cd backend
 python -m venv venv
+```
 
-# 2. Activate it (Windows PowerShell)
+**Activate:**
+
+Windows:
+
+```bash
 .\venv\Scripts\activate
 ```
-*(If you are on macOS or Linux, run `source venv/bin/activate` instead)*
 
-### 3. Install Dependencies
-With the `(venv)` tag prefix active in your terminal, run:
-```powershell
+Mac/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+```bash
 pip install -r requirements.txt
+cp .env.example .env
 ```
-*(This install includes PyTorch and Sentence-Transformers, so it may take a few minutes).*
 
-### 4. Configure Environment Variables
-You must provide keys in order for the `llm.py` service to hit the external language models.
+Edit `.env`:
 
-*Duplicate* the included `.env.example` file and rename it uniquely to `.env`. This `.env` file is protected by the `.gitignore` so your API keys will stay private.
-
-Inside the `.env`, provide comma-separated raw keys:
-```ini
-GROQ_API_KEYS="gsk_123,gsk_456"
-GEMINI_API_KEYS="AIza123,AIza456"
+```env
+GROQ_API_KEYS=your_keys
+GEMINI_API_KEYS=your_keys
+MONGODB_URI=mongodb://localhost:27017/
 ```
-*(The system features a robust "round-robin" rotation strategy. It will burn through your Groq keys sequentially for maximum speed, and gracefully fallback to your free Gemini keys perfectly if Groq imposes a rate limit).*
 
-### 5. Running the Live API Server
-Once your virtual environment is active and your API keys are registered, boot up the local Uvicorn dev server:
+Run backend:
 
-```powershell
+```bash
 uvicorn app.main:app --reload
 ```
 
-By default, the server pins exactly to **`http://127.0.0.1:8000`**. 
+---
 
-You can instantly test if the server is alive by going to `http://127.0.0.1:8000/health` in your browser.
+3. Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
-## 📁 Repository Architectural Structure
+⚙️ Environment Variables
 
-* **`/app/main.py`** - FastAPI initialization and global CORS router registration.
-* **`/app/api/routes`** - Defined Restful POST Endpoints pointing out to the React frontend (`/api/upload`, `/api/ask`).
-* **`/app/ingestion/`** - The mathematical pipeline logic reading an uploaded binary PDF, splitting strings, executing `model.encode()`, and saving the vectors to `local_store.pkl`.
-* **`/app/services/`** - Isolated functional services for talking to the remote LLM APIs, checking cache states, parsing model answers, and finding nearest string distances locally using SciPy cosine mathematics. 
-* **`/app/agents/`** - The deterministic LangGraph nodes (retriever → summarizer → critic loop) acting as the "Brain" to prevent AI hallucinations.
+| Variable        | Description          |
+| --------------- | -------------------- |
+| GROQ_API_KEYS   | Groq API keys        |
+| GEMINI_API_KEYS | Gemini fallback keys |
+| GROQ_MODEL      | Default Groq model   |
+| GEMINI_MODEL    | Gemini model         |
+| EMBEDDING_MODEL | SentenceTransformer  |
+| MONGODB_URI     | MongoDB connection   |
+| RETRIEVAL_TOP_K | Retrieved chunks     |
+| REDIS_URL       | Optional cache       |
+
+---
+
+📡 API Endpoints
+
+| Method | Endpoint                       | Description |
+| ------ | ------------------------------ | ----------- |
+| POST   | /api/ask                       | Query       |
+| POST   | /api/upload                    | Upload PDF  |
+| GET    | /api/documents                 | List docs   |
+| GET    | /api/documents/view/{filename} | View PDF    |
+| DELETE | /api/documents/{filename}      | Delete      |
+| GET    | /health                        | Health      |
+
+Example
+
+```json
+{
+  "query": "Explain Knowledge-Based Systems",
+  "files": ["SQL-Manual.pdf"]
+}
+```
+
+---
+
+🗂️ Structure
+
+```
+rag/
+├── backend/
+│   ├── app/
+│   ├── uploads/
+│   ├── qdrant_data/
+│   └── requirements.txt
+├── frontend/
+│   └── src/
+└── README.md
+```
+
+---
+
+🔒 Security
+
+* Do not commit `.env`
+* Restrict CORS in production
+
+---
+
+📝 License
+
+MIT
